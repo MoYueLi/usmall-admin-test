@@ -13,8 +13,6 @@ const mutations = {
   },
   setSpecsTotal (state, sum) {
     state.total = sum
-    console.log(sum)
-    console.log(state.total)
   },
   setSpecsPage (state, page) {
     state.page = page
@@ -29,6 +27,12 @@ const actions = {
       page: context.state.page
     }
     reqSpecsList(params).then(res => {
+      // 如果删除最后一页的最后一个，自动去请求前面一页的
+      if (res.data.list && !res.data.list.length && context.state.page > 1) {
+        context.commit('setSpecsPage', context.state.page - 1)
+        context.dispath('reqSpecsList')
+        return
+      }
       context.commit('setSpecsList', res.data.list)
     })
   },
